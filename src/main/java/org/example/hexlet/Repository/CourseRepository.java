@@ -30,6 +30,10 @@ public class CourseRepository {
                 .findAny();
         return course;
     }
+    public static boolean existsByName(String name) {
+        return entities.stream()
+                .anyMatch(course -> course.getName().equalsIgnoreCase(name));
+    }
 
     public static List<Course> getEntities() {
         return entities;

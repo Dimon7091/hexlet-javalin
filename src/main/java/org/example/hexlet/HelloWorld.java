@@ -2,15 +2,15 @@ package org.example.hexlet;
 
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
+import io.javalin.validation.ValidationException;
 import org.apache.commons.text.StringEscapeUtils;
 import org.example.hexlet.Repository.CourseRepository;
 import org.example.hexlet.Repository.UserRepository;
-import org.example.hexlet.dto.CoursePage;
-import org.example.hexlet.dto.CoursesPage;
-import org.example.hexlet.dto.UsersPage;
+import org.example.hexlet.dto.*;
 import org.example.hexlet.model.Course;
 import org.example.hexlet.model.User;
 
+import java.lang.management.BufferPoolMXBean;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +36,7 @@ public class HelloWorld {
             config.bundledPlugins.enableDevLogging();
             config.fileRenderer(new JavalinJte());
         });
+
         // Описываем, что загрузится по адресу /
         app.get("/", ctx -> {
             ctx.render("index.jte");
@@ -57,15 +58,32 @@ public class HelloWorld {
         });
 
         app.get("/courses/build", ctx -> {
-            ctx.render("courses/build.jte");
+            var page = new BuildCoursePage();
+            ctx.render("courses/build.jte", model("page", page));
         });
 
         app.post("/courses", ctx -> {
-            var name = ctx.formParam("name");
-            var description = ctx.formParam("description");
-            var course = new Course(name, description);
-            CourseRepository.save(course);
-            ctx.redirect("/courses");
+            var name = "";
+            var description = "";
+
+            try {
+                String finalName = name;
+                name = ctx.formParamAsClass("name", String.class)
+                        .check(value -> value.length() > 2, "Название должно быть больше двух символов")
+                        .check(value -> !CourseRepository.existsByName(value),
+                                "Такое название курса уже существует")
+                        .get();
+                description = ctx.formParamAsClass("description", String.class).
+                        check(value -> value.trim().length() > 10, "Описание должно быть больше десяти символов")
+                        .get();
+                var course = new Course(name, description);
+                CourseRepository.save(course);
+                ctx.redirect("/courses");
+            } catch (ValidationException e) {
+                ctx.status(422);
+                var page = new BuildCoursePage(name, description, e.getErrors());
+                ctx.render("courses/build.jte", model("page", page));
+            }
         });
 
         app.get("/courses/{id}", ctx -> {
@@ -74,9 +92,10 @@ public class HelloWorld {
             var page = new CoursePage(course.get());
             ctx.render("courses/show.jte", model("page", page));
         });
-
+        // Юзеры
         app.get("/users/build", ctx -> {
-            ctx.render("users/build.jte");
+            var page = new BuildUserPage();
+            ctx.render("users/build.jte", model("page", page));
         });
 
         app.get("/users", ctx -> {
@@ -87,14 +106,22 @@ public class HelloWorld {
         });
 
         app.post("/users", ctx -> {
-            var name = ctx.formParam("name");
-            var email = ctx.formParam("email");
-            var password = ctx.formParam("password");
-            var passwordConfirmation = ctx.formParam("passwordConfirmation");
+            var name = ctx.formParam("name").substring(0, 1).substring(0, 1).toUpperCase()
+                    + ctx.formParam("name").substring(1).toLowerCase() ;
+            var email = ctx.formParam("email").toLowerCase();
 
-            var user = new User(name, email, password);
-            UserRepository.save(user);
-            ctx.redirect("/users");
+            try {
+                var passwordConfirmation = ctx.formParam("passwordConfirmation");
+                var password = ctx.formParamAsClass("password", String.class)
+                        .check(value -> value.equals(passwordConfirmation), "Пароли не совподают")
+                        .get();
+                var user = new User(name, email, password);
+                UserRepository.save(user);
+                ctx.redirect("/users");
+            } catch (ValidationException e) {
+                var page = new BuildUserPage(name, email, e.getErrors());
+                ctx.render("users/build.jte", model("page", page));
+            }
         });
 
         app.start(7070); // Стартуем веб-сервер

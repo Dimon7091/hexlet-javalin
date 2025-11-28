@@ -1,5 +1,6 @@
-package org.example.hexlet.Repository;
+package org.example.hexlet.repository;
 
+import io.javalin.http.NotFoundResponse;
 import lombok.Getter;
 import org.example.hexlet.model.User;
 
@@ -31,8 +32,19 @@ public class UserRepository {
                 .findAny();
         return user;
     }
+
     public static List<User> getEntities() {
         return entities;
+    }
+
+    public static void delete(Long id) {
+        if (find(id).isPresent()) {
+            var user = find(id).get();
+            entities.remove(user);
+        } else {
+            throw new NotFoundResponse("Entity with id = " + id + " not found");
+        }
+
     }
 }
 

@@ -34,6 +34,7 @@ dependencies {
     implementation("org.jetbrains.kotlin.plugin.lombok:org.jetbrains.kotlin.plugin.lombok.gradle.plugin:2.3.0-Beta2")
     implementation("org.apache.commons:commons-text:1.14.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
+    implementation("commons-codec:commons-codec:1.20.0")
 }
 
 tasks.test {

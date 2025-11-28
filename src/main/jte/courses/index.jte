@@ -1,4 +1,4 @@
-@import org.example.hexlet.dto.CoursesPage
+@import org.example.hexlet.dto.courses.CoursesPage
 
 @param CoursesPage page
 
@@ -17,11 +17,23 @@
     @else
         @for(var course : page.getCourses())
 
-                <h2><a href="/courses/{id}${course.getId()}">${course.getName()}</a></h2>
+                <h2><a href="/courses/${course.getId()}">${course.getName()}</a></h2>
                 <p>${course.getDescription()}</p>
 
         @endfor
-    @endif`
+    @endif
+    <div>
+
+           @if (page.getCurrentPage() > 1)
+               <a href="/courses/?page=${page.getCurrentPage() - 1}" class="btn btn-primary">&lt Предыдущая страница</a>
+           @endif
+           <span class="btn btn-primary" style="font-size: 20px;">${page.getCurrentPage()}</span>
+           @if (page.getCurrentPage() < page.getTotalPages())
+               <a href="/courses/?page=${page.getCurrentPage() + 1}" class="btn btn-primary">Следующая страница &gt</a>
+           @endif
+
+    </div>
+`
 )
 
 

@@ -1,4 +1,4 @@
-package org.example.hexlet.dto;
+package org.example.hexlet.dto.courses;
 import org.example.hexlet.model.Course;
 
 import lombok.AllArgsConstructor;
@@ -11,4 +11,6 @@ import java.util.List;
 public class CoursesPage {
     private List<Course> courses;
     private String term;
+    private Integer currentPage;
+    private Integer totalPages;
 }

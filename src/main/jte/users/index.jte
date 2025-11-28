@@ -1,4 +1,4 @@
-@import org.example.hexlet.dto.UsersPage
+@import org.example.hexlet.dto.users.UsersPage
 @param UsersPage  page
 
 @template.layout.page(
@@ -9,10 +9,13 @@ content = @`
     @if(page.getUsers().isEmpty())
         <p>Пока не добавлено ни одного пользователя</p>
     @else
-        @for(var user : page.getUsers())
-
-            <h2><a href="/users/show.jte${user.getId()}">${user.getName()} ${user.getEmail()}</a></h2>
-        @endfor
+        <ul>
+            @for(var user : page.getUsers())
+                <li>
+                    <h2><a href="/users/${user.getId()}">Имя: ${user.getName()} <br> Email: ${user.getEmail()}</a></h2>
+                </li>
+            @endfor
+        </ul>
     @endif
 `
 )

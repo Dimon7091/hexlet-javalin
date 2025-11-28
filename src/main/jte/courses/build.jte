@@ -1,6 +1,7 @@
-@import org.example.hexlet.dto.BuildCoursePage
+@import org.example.hexlet.dto.courses.BuildCoursePage
+@import org.example.hexlet.dto.courses.CoursesPage
 @param BuildCoursePage page
-
+@param CoursesPage numberPage
 @template.layout.page(
 content = @`
 
@@ -19,7 +20,7 @@ content = @`
         </ul>
     @endif
 
-    <form action="/courses" method="post">
+    <form action="/courses/${}" method="post">
         <div style="margin: 10px">
             <label>
                 Имя

@@ -1,4 +1,4 @@
-@import org.example.hexlet.dto.BuildUserPage
+@import org.example.hexlet.dto.users.BuildUserPage
 @param BuildUserPage page
 
 @template.layout.page(

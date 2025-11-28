@@ -1,9 +1,10 @@
-package org.example.hexlet.Repository;
+package org.example.hexlet.repository;
 
 import org.example.hexlet.model.Course;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -26,10 +27,18 @@ public class CourseRepository {
 
     public static Optional<Course> find(Long id) {
         var course = entities.stream()
-                .filter(entity -> entity.getId().equals(id))
+                .filter(entity -> Objects.equals(entity.getId(), id))
                 .findAny();
         return course;
     }
+
+    public static List<Course> findAll(int pageNumber, int pageSize) {
+        var begin = (pageNumber - 1) * pageSize;
+        var end = begin + pageSize;
+
+        return entities.stream().skip(begin).limit(end - begin).toList();
+    }
+
     public static boolean existsByName(String name) {
         return entities.stream()
                 .anyMatch(course -> course.getName().equalsIgnoreCase(name));

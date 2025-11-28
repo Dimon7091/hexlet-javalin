@@ -1,4 +1,4 @@
-package org.example.hexlet.dto;
+package org.example.hexlet.dto.users;
 
 import io.javalin.validation.ValidationError;
 import lombok.AllArgsConstructor;
